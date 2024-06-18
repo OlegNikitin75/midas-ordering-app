@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+	@apply scroll-smooth;
+}
+body {
+	@apply min-h-screen overflow-x-hidden bg-black bg-[url('/img/bg.png')] bg-no-repeat font-medium text-white;
+}
+
+.mainContainer {
+	@apply mx-auto max-w-full px-4 md:max-w-[733px] lg:max-w-[989px] 2xl:max-w-[1500px];
+}
+input {
+	outline: none;
+}
+input[type='text']:disabled{
+	@apply bg-app-gray text-gray-500 cursor-not-allowed;
+}
+input[type='email']:disabled,
+input[type='password']:disabled {
+	@apply bg-app-gray/50;
+}
+
+img {
+	@apply block h-full w-full object-cover;
+}
+
+.noScroll {
+	overflow: hidden;
+}
+.about p:not(:last-child) {
+	@apply mb-3 2xl:mb-8;
+}
+.aboutSlider {
+	@apply h-60 md:h-56;
+}
+.aboutSlider a:hover span {
+	@apply bg-app-yellow text-black duration-300;
+}
+
+.aboutSlider a span {
+	@apply absolute bottom-0 h-[30%] bg-opacity-60  p-3 text-center;
+}
+.aboutSlider img {
+	@apply h-[70%] w-full;
+}
+.aboutSlider .swiper-button-prev,
+.aboutSlider .swiper-button-next {
+	top: calc(75% / 2);
+}
+.aboutSlider .swiper-button-prev:after,
+.aboutSlider .swiper-button-next:after {
+	font-size: 24px;
+	color: white;
+	font-weight: 900;
+}

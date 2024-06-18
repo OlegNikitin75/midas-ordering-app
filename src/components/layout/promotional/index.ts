@@ -1,0 +1,1 @@
+export {Promotional} from './ui'
