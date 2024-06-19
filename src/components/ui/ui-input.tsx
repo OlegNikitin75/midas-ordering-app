@@ -8,14 +8,14 @@ import {
 } from 'react'
 
 type UiInputProps = {
-	onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+	//onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 	className?: string
 	label?: string
 	inputProps?: PropsWithRef<InputHTMLAttributes<HTMLInputElement>>
 }
 
 export const UiInput: FC<UiInputProps> = ({
-	onChange,
+	//onChange,
 	className,
 	label,
 	inputProps
@@ -38,7 +38,7 @@ export const UiInput: FC<UiInputProps> = ({
 				<input
 					{...inputProps}
 					id={id}
-					onChange={onChange}
+					//onChange={onChange}
 					className={clsx(
 						className,
 						'w-full  shrink-0 border-2 px-3 py-2 text-app-blue focus:border-app-yellow disabled:border-app-gray'

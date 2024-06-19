@@ -1,18 +1,12 @@
 'use client'
 import { useEffect } from 'react'
-import { LoginSchema } from '@/app/schemas'
-import { useMobileMenuStore } from '@/app/store/store'
-import { ILoginFormData } from '@/app/types'
-import { NavbarMobile } from '@/components/layout/navbar-mobile'
-import { UiButton, UiErrorMessage, UiHeading, UiInput } from '@/components/ui'
-import { NAV_LINKS } from '@/constants/nav-links'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { login } from '@/app/actions/login'
+import {  useSession } from 'next-auth/react'
+import { useMobileMenuStore } from '@/app/store/store'
+import { NavbarMobile } from '@/components/layout/navbar-mobile'
+import { UiHeading } from '@/components/ui'
+import { NAV_LINKS } from '@/constants/nav-links'
 import { LoginForm } from '@/components/entities/login-form'
 
 export const LoginPage = ({}) => {
@@ -28,31 +22,6 @@ export const LoginPage = ({}) => {
 		}
 	}, [sessionStatus, router])
 
-
-
-	// const handleFormSubmit = async (event: FormEvent) => {
-	// 	event.preventDefault()
-	// 	if (!isValidateEmail(email)) {
-	// 		setError('Email не корректен')
-	// 		return
-	// 	}
-	// 	if (!password || password.length < 6) {
-	// 		setError('Пароль не корректен')
-	// 		return
-	// 	}
-
-	// 	const res = await signIn('credentials', {
-	// 		redirect: false,
-	// 		email,
-	// 		password
-	// 	})
-	// 	if (res?.error) {
-	// 		setError('Неверные email или пароль')
-	// 		if (res?.url) router.replace(`${NAV_LINKS.home}`)
-	// 	} else {
-	// 		setError('')
-	// 	}
-	// }
 
 	if (sessionStatus === 'loading')
 		return (

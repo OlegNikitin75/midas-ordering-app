@@ -1,8 +1,4 @@
-import { FC } from 'react'
-
-interface IUiButtonAddToCartProps {}
-
-export const UiButtonAddToCart: FC<IUiButtonAddToCartProps> = ({}) => {
+export const UiButtonAddToCart = () => {
 	return (
 		<button
 			type='button'
