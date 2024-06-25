@@ -1,7 +1,7 @@
 'use client'
 import { FC } from 'react'
 import { useMobileMenuStore } from '@/app/store/store'
-import { Hero } from '@/components/layout/hero'
+import { Hero } from '@/components/layout/hero/ui'
 import { NavbarMobile } from '@/components/layout/navbar-mobile'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Favorites } from '@/components/layout/favorites'

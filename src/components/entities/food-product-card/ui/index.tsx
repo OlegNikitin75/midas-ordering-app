@@ -33,8 +33,8 @@ export const FoodProductCard: FC<IFoodProductCardProps> = ({ item }) => {
 						<Image
 							src={item.image}
 							alt={''}
-							layout='fill'
-							objectFit='cover'
+							width={250}
+							height={250}
 							className='duration-300 group-hover:scale-125'
 						/>
 					</div>

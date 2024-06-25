@@ -62,12 +62,11 @@ export const Hero: FC<IHeroProps> = ({}) => {
 			</div>
 			<div className='absolute -left-3 hidden h-48 w-32 -translate-y-1/4 bg-[url("/img/dots-left.svg")] md:top-[120px] md:block lg:top-[220px] 2xl:w-40'></div>
 			<div className='mainContainer relative lg:min-h-[488px] 2xl:min-h-[925px]'>
-				<div className='hidden h-[480px] flex-row justify-between md:flex lg:max-w-[312px] lg:flex-col lg:pt-8'>
+				<div className='hidden h-[480px] flex-row justify-between md:flex lg:max-w-[500px] lg:flex-col lg:pt-8'>
 					<div className='md:flex-1'>
-						<h1 className='text-[25px] lg:w-full mb-8'>
+						<UiHeading tag='h1' className='mb-8 lg:w-full'>
 							Доставка готовой еды из фермерских продуктов!
-						</h1>
-					
+						</UiHeading>
 					</div>
 
 					<div className='mb-10 flex flex-col'>

@@ -1,51 +1,81 @@
 'use client'
-import { FC, useEffect, useState } from 'react'
+import { FC, startTransition, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { NavbarMobile } from '@/components/layout/navbar-mobile'
-import { UiButton, UiButtonWithIcon, UiHeading, UiInput } from '@/components/ui'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useMobileMenuStore } from '@/app/store/store'
+import { ProfileSchema } from '@/schemas'
+import { IProfileFormData } from '@/app/types'
+import { setDefaultUserImage } from '@/lib/common'
+import { NavbarMobile } from '@/components/layout/navbar-mobile'
+import { UiButton, UiHeading, UiInput, UiMessage } from '@/components/ui'
 import { NAV_LINKS } from '@/constants/nav-links'
-import { StaticImport } from 'next/dist/shared/lib/get-img-props'
-import { AnimatePresence, motion } from 'framer-motion'
 
 interface IProfilePageProps {}
 
-type ImageType = {
-	userImage: string | StaticImport | null | undefined
-}
-
 export const ProfilePage: FC<IProfilePageProps> = () => {
 	const isOpenMenu = useMobileMenuStore(state => state.isOpenMenu)
-	const { data: session, status: sessionStatus } = useSession()
-	const [userName, setUserName] = useState('')
-	const [error, setError] = useState('')
+
+	const { data: session, status: sessionStatus, update } = useSession()
+
+	const [userAvatar, setUserAvatar] = useState<string | undefined | null>('')
+	const [defaultUserAvatar, setDefaultUserAvatar] = useState<
+		string | undefined | null
+	>('')
+
+	const [error, setError] = useState<string | undefined>('')
+
+	const { register, handleSubmit, formState, setValue } =
+		useForm<IProfileFormData>({
+			resolver: zodResolver(ProfileSchema),
+			mode: 'onChange'
+		})
+
+	const nameError = formState.errors.name?.message
+
 	useEffect(() => {
 		if (sessionStatus === 'authenticated') {
-			const currentUserName = session?.user?.name
-			setUserName(currentUserName)
+			setValue('name', session?.user?.name)
+			setValue('email', session?.user?.email)
+
+			const userImage = session?.user?.image
+			userImage
+				? setUserAvatar(userImage)
+				: setDefaultUserAvatar(setDefaultUserImage(session?.user?.name))
 		}
-	}, [session, sessionStatus])
+	}, [session, sessionStatus, setValue, userAvatar])
 
-	const userImage: ImageType = session?.user?.image
-
-	const handleProfileInfoUpdate = async () => {
+	const submitData = async (data: IProfileFormData) => {
+		const { name } = data
 		try {
-			const res = await fetch('/api/profile', {
+			const response = await fetch('/api/profile', {
 				method: 'PUT',
-				body: JSON.stringify({ name: userName }),
+				body: JSON.stringify({ name }),
 				headers: { 'Content-Type': 'application/json' }
 			})
 
-			if (res.status === 200) {
+			update({ name: name })
+			if (response.status === 200) {
 				setError('')
 			}
 		} catch (error) {
-			setError(
-				'Ошибка обновления профиля пользователя, пожалуйста попробуйте позже'
-			)
+			return {
+				error:
+					'Ошибка обновления профиля пользователя, пожалуйста попробуйте позже'
+			}
 		}
+	}
+
+	const handleProfileInfoUpdate = async (data: IProfileFormData) => {
+		console.log(data)
+		setError('')
+		startTransition(() => {
+			submitData(data).then(res => {
+				setError(res?.error)
+			})
+		})
 	}
 
 	if (sessionStatus === 'loading')
@@ -68,8 +98,19 @@ export const ProfilePage: FC<IProfilePageProps> = () => {
 
 				<div className='mx-auto w-full max-w-md py-10'>
 					<div className='flex gap-4'>
-						<div className='group relative mt-4 h-32 w-32 shrink-0 overflow-hidden rounded-lg'>
-							<Image src={userImage} alt='аватар' width={128} height={128} />
+						<div className='group relative mt-4 h-32 w-32 shrink-0 '>
+							{userAvatar && (
+								<Image src={userAvatar} alt='аватар' width={128} height={128} />
+							)}
+
+							{defaultUserAvatar && (
+								<span
+									className={`inline-block h-full w-full bg-app-blue pt-4 text-center text-8xl uppercase`}
+								>
+									{defaultUserAvatar}
+								</span>
+							)}
+
 							<button
 								type='button'
 								className='absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100'
@@ -79,36 +120,29 @@ export const ProfilePage: FC<IProfilePageProps> = () => {
 								</div>
 							</button>
 						</div>
-						<form className='grow' onSubmit={handleProfileInfoUpdate}>
-							<UiInput
-								onChange={event => setUserName(event.target.value)}
-								inputProps={{
-									placeholder: 'Имя и фамилия',
-									type: 'text',
-									value: userName
-								}}
-							/>
+						<form
+							className='grow'
+							onSubmit={handleSubmit(handleProfileInfoUpdate)}
+						>
 							<UiInput
 								inputProps={{
 									type: 'text',
-									value: session?.user?.email,
-									disabled: true
+									...register('name')
 								}}
 							/>
-							<UiButton variant='primary'>Сохранить</UiButton>
+							{nameError && <UiMessage message={nameError} />}
+							<UiInput
+								inputProps={{
+									type: 'email',
+									disabled: true,
+									...register('email')
+								}}
+							/>
+							{error && <UiMessage message={error} />}
+							<UiButton variant='primary'>
+								Сохранить
+							</UiButton>
 						</form>
-						{error && (
-							<AnimatePresence>
-								<motion.div
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
-									className='pb-2 text-center text-base font-semibold text-app-red'
-								>
-									{error}
-								</motion.div>
-							</AnimatePresence>
-						)}
 					</div>
 				</div>
 			</div>

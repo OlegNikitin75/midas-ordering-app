@@ -2,44 +2,51 @@
 import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { signIn } from 'next-auth/react'
-import router from 'next/router'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ILoginFormData } from '@/app/types'
 import { UiButton, UiInput, UiMessage } from '@/components/ui'
 import { NAV_LINKS } from '@/constants/nav-links'
-import { login } from '@/actions/login'
 import { LoginSchema } from '@/schemas'
 
 export const LoginForm = () => {
 	const { register, handleSubmit, formState } = useForm<ILoginFormData>({
 		resolver: zodResolver(LoginSchema),
-		mode: 'onChange'
+		mode: 'onChange',
+		defaultValues: {
+			email: '',
+			password: ''
+		}
 	})
 
 	const emailError = formState.errors.email?.message
 	const passwordError = formState.errors.password?.message
 
+	const Router = useRouter()
 	const [isPending, startTransition] = useTransition()
-
 	const [error, setError] = useState<string | undefined>('')
-	const [success, setSuccess] = useState<string | undefined>('')
+
+	const submitData = async (data: ILoginFormData) => {
+		const { email, password } = data
+		const res = await signIn('credentials', {
+			redirect: false,
+			email,
+			password
+		})
+		if (res?.error) return { error: 'Неверные email или пароль' }
+		if (res?.url) Router.replace(`${NAV_LINKS.home}`)
+	}
 
 	const handleFormSubmit = async (data: ILoginFormData) => {
+		console.log(data)
+		setError('')
 		startTransition(() => {
-			login(data).then(res => {
-				setError(res.error)
-				setSuccess(res.success)
+			submitData(data).then(res => {
+				setError(res?.error)
 			})
 		})
-
-		// const res = await signIn('credentials', {
-		// 	redirect: false,
-		// 	email,
-		// 	password
-		// })
-		// if (res?.url) router.replace(`${NAV_LINKS.home}`)
 	}
 	return (
 		<div className='w-full max-w-[360px] pt-6 md:pt-10'>
@@ -65,7 +72,6 @@ export const LoginForm = () => {
 				/>
 				{passwordError && <UiMessage message={passwordError} />}
 				{error && <UiMessage message={error} />}
-				{success && <UiMessage message={success} type='success' />}
 
 				<UiButton
 					disabled={isPending}

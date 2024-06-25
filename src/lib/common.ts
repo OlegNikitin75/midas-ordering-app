@@ -13,4 +13,6 @@ export const isValidateEmail = (email: string) => {
 	return emailRegex.test(email)
 }
 
-
+export const setDefaultUserImage = (userName: string | null | undefined) => {
+	return userName?.trim().charAt(0)
+}

@@ -2,18 +2,16 @@
 import { useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import {  useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useMobileMenuStore } from '@/app/store/store'
 import { NavbarMobile } from '@/components/layout/navbar-mobile'
 import { UiHeading } from '@/components/ui'
 import { NAV_LINKS } from '@/constants/nav-links'
 import { LoginForm } from '@/components/entities/login-form'
 
-export const LoginPage = ({}) => {
+export const LoginPage = () => {
 	const isOpenMenu = useMobileMenuStore(state => state.isOpenMenu)
-
 	const { data: session, status: sessionStatus } = useSession()
-
 	const router = useRouter()
 
 	useEffect(() => {
@@ -21,7 +19,6 @@ export const LoginPage = ({}) => {
 			router.replace(`${NAV_LINKS.home}`)
 		}
 	}, [sessionStatus, router])
-
 
 	if (sessionStatus === 'loading')
 		return (
@@ -31,7 +28,7 @@ export const LoginPage = ({}) => {
 		)
 
 	return (
-		
+		sessionStatus === 'unauthenticated' && (
 			<section className='relative pb-20'>
 				<div className='absolute right-0 -z-10 hidden brightness-50 md:top-[100px] md:block md:h-[504px] md:w-[753px] lg:top-0 lg:h-[450px] lg:w-[520px] lg:brightness-100 xl:h-[500px] xl:w-[600px] 2xl:h-[600px] 2xl:w-[840px]'>
 					<Image
@@ -46,10 +43,11 @@ export const LoginPage = ({}) => {
 
 				<div className='mainContainer'>
 					<UiHeading tag='h2' className='md:max-w-80'>
-						Войти на сайт
+						Авторизация
 					</UiHeading>
-					<LoginForm/>
+					<LoginForm />
 				</div>
 			</section>
 		)
+	)
 }

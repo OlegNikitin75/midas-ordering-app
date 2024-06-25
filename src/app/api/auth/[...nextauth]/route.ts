@@ -1,10 +1,10 @@
-import NextAuth from 'next-auth/next'
-import { Account, User as AuthUser } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
-import bcrypt from 'bcryptjs'
 import { User } from '@/models/User'
 import { connect } from '@/utils/db'
+import bcrypt from 'bcryptjs'
+import { Account, User as AuthUser } from 'next-auth'
+import NextAuth from 'next-auth/next'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 
 export const authOptions = {
 	providers: [
@@ -40,6 +40,51 @@ export const authOptions = {
 		})
 	],
 	callbacks: {
+		async jwt({
+			token,
+			user,
+			session,
+			trigger
+		}: {
+			token: any
+			user: AuthUser
+			session: any
+			trigger: any
+		}) {
+			//console.log('jwt callback', { token, user, session })
+			if (trigger === 'update' && session?.name) {
+				token.name = session.name
+			}
+
+			if (user) {
+				return {
+					...token,
+					id: user.id,
+					name: user.name
+				}
+			}
+			return token
+		},
+		async session({
+			session,
+			token,
+			user
+		}: {
+			token: any
+			user: AuthUser
+			session: any
+		}) {
+			//console.log('session callback', { token, user, session })
+			return {
+				...session,
+				user: {
+					...session.user,
+					id: token.id,
+					name: token.name
+				}
+			}
+		},
+
 		async signIn({ user, account }: { user: AuthUser; account: Account }) {
 			if (account?.provider === 'credentials') {
 				return true
@@ -50,7 +95,8 @@ export const authOptions = {
 					const existingUser = await User.findOne({ email: user.email })
 					if (!existingUser) {
 						const newUser = new User({
-							email: user.email
+							email: user.email,
+							name: user.name
 						})
 						await newUser.save()
 						return true
@@ -65,4 +111,4 @@ export const authOptions = {
 	}
 }
 export const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST}

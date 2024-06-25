@@ -17,7 +17,7 @@ export function UiHeading({ className, tag, ...props }: UiHeadingProps) {
 				className,
 				'',
 				{
-					h1: '',
+					h1: 'text-3xl lg:text-6xl text-app-gray font-semibold md:leading-10',
 					h2: 'text-[40px] md:text-[80px] leading-[112%]',
 					h3: 'md:text-[20px] text-sm',
 					h4: 'text-lg font-semibold'

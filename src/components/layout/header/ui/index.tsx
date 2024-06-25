@@ -152,7 +152,7 @@ export const Header = () => {
 								)}
 							</div>
 						</div>
-						{session && (
+						{session && pathname !== NAV_LINKS.profile && (
 							<UiUserMessage
 								name={userName}
 								className='-ml-6 hidden md:block'

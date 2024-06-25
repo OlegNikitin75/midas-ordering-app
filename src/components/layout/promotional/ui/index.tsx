@@ -20,9 +20,6 @@ export const Promotional: FC<IPromotionalProps> = ({}) => {
 						</span>
 						<span className='hidden gap-2  text-2xl font-bold text-app-yellow lg:flex'>
 							Акция
-							<div className=' animate-pulse'>
-								<Image src='/img/fire-icon.png' alt='' width={12} height={12} />
-							</div>
 						</span>
 					</div>
 

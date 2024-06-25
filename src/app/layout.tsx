@@ -1,5 +1,5 @@
-import { Footer } from '@/components/layout/footer'
-import { Header } from '@/components/layout/header'
+import { Footer } from '@/components/layout/footer/ui'
+import { Header } from '@/components/layout/header/ui'
 import SessionProvider from '@/utils/SessionProvider'
 import type { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
